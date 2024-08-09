@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app_news_c11_fri/app_colors.dart';
+import 'package:flutter_app_news_c11_fri/home/category/category_details.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   static const String routeName = 'home_screen';
 
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Stack(children: [
@@ -24,6 +30,7 @@ class HomeScreen extends StatelessWidget {
             style: Theme.of(context).textTheme.titleLarge,
           ),
         ),
+        body: CategoryDetails(),
       )
     ]);
   }
