@@ -9,7 +9,7 @@ class ApiManager {
   /*
   https://newsapi.org/v2/top-headlines/sources?apiKey=500c5a4f9b244f3db92a47f436f1819e
    */
-  static Future<SourceResponse?> getSources(String categoryId) async {
+   Future<SourceResponse?> getSources(String categoryId) async {
     Uri url = Uri.https(ApiConstatnts.baseUrl, ApiConstatnts.sourcesApi,
         {'apiKey': ApiConstatnts.apiKey, 'category': categoryId});
     try {
@@ -31,7 +31,7 @@ class ApiManager {
   /*
   https://newsapi.org/v2/everything?q=bitcoin&apiKey=500c5a4f9b244f3db92a47f436f1819e
    */
-  static Future<NewsResponse?> getNewsBySourceId(String sourceId) async {
+   Future<NewsResponse?> getNewsBySourceId(String sourceId) async {
     Uri url = Uri.https(ApiConstatnts.baseUrl, ApiConstatnts.newsApi,
         {'apiKey': ApiConstatnts.apiKey, 'sources': sourceId});
     var response = await http.get(url);
