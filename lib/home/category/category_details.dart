@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app_news_c11_fri/app_colors.dart';
-import 'package:flutter_app_news_c11_fri/di.dart';
+import 'package:flutter_app_news_c11_fri/di/di.dart';
 import 'package:flutter_app_news_c11_fri/home/category/cubit/category_details_view_model.dart';
 import 'package:flutter_app_news_c11_fri/home/category/cubit/source_states.dart';
 import 'package:flutter_app_news_c11_fri/home/tabs/tab_widget.dart';
@@ -17,8 +17,9 @@ class CategoryDetails extends StatefulWidget {
 }
 
 class _CategoryDetailsState extends State<CategoryDetails> {
-  CategoryDetailsViewModel viewModel =
-      CategoryDetailsViewModel(sourceRepository: injectSourceRepository());
+  CategoryDetailsViewModel viewModel = getIt<CategoryDetailsViewModel>();
+
+  /// field injection
 
   @override
   void initState() {

@@ -1,7 +1,9 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter_app_news_c11_fri/home/category/cubit/source_states.dart';
 import 'package:flutter_app_news_c11_fri/repository/sources/source_repository.dart';
+import 'package:injectable/injectable.dart';
 
+@injectable
 class CategoryDetailsViewModel extends Cubit<SourceStates> {
   SourceRepository sourceRepository;
 
