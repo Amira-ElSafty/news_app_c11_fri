@@ -1,59 +1,107 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app_news_c11_fri/api/api_manger.dart';
 import 'package:flutter_app_news_c11_fri/app_colors.dart';
+import 'package:flutter_app_news_c11_fri/home/news/cubit/news_states.dart';
+import 'package:flutter_app_news_c11_fri/home/news/cubit/news_widget_view_model.dart';
 import 'package:flutter_app_news_c11_fri/home/news/news_item.dart';
-import 'package:flutter_app_news_c11_fri/model/NewsResponse.dart';
 import 'package:flutter_app_news_c11_fri/model/SourceResponse.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-class NewsWidget extends StatelessWidget {
+class NewsWidget extends StatefulWidget {
   Source source;
 
   NewsWidget({required this.source});
 
   @override
+  State<NewsWidget> createState() => _NewsWidgetState();
+}
+
+class _NewsWidgetState extends State<NewsWidget> {
+  NewsWidgetViewModel viewModel = NewsWidgetViewModel();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    viewModel.getNewsBySourceId(widget.source.id ?? "");
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return FutureBuilder<NewsResponse?>(
-        future: ApiManager.getNewsBySourceId(source.id ?? ''),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+    return BlocBuilder<NewsWidgetViewModel, NewsStates>(
+        bloc: viewModel,
+        builder: (context, state) {
+          if (state is NewsLoadingState) {
             return Center(
               child: CircularProgressIndicator(
                 color: AppColors.primaryLightColor,
               ),
             );
-          } else if (snapshot.hasError) {
+          } else if (state is NewsErrorState) {
             return Column(
               children: [
-                Text('Something went wrong'),
+                Text(state.errorMessage),
                 ElevatedButton(
                     onPressed: () {
-                      ApiManager.getNewsBySourceId(source.id ?? "");
+                      viewModel.getNewsBySourceId(widget.source.id ?? "");
                     },
                     child: Text('Try again'))
               ],
             );
-          }
-          if (snapshot.data!.status != 'ok') {
-            return Column(
-              children: [
-                Text(snapshot.data!.message!),
-                ElevatedButton(
-                    onPressed: () {
-                      ApiManager.getNewsBySourceId(source.id ?? "");
-                    },
-                    child: Text('Try again'))
-              ],
+          } else if (state is NewsSuccessState) {
+            return ListView.builder(
+              itemBuilder: (context, index) {
+                return NewsItem(
+                  news: state.newsList[index],
+                );
+              },
+              itemCount: state.newsList.length,
             );
           }
-          var newsList = snapshot.data!.articles!;
-          return ListView.builder(
-            itemBuilder: (context, index) {
-              return NewsItem(
-                news: newsList[index],
-              );
-            },
-            itemCount: newsList.length,
-          );
+          return Container();
         });
+
+    // FutureBuilder<NewsResponse?>(
+    //   future: ApiManager.getNewsBySourceId(widget.source.id ?? ''),
+    //   builder: (context, snapshot) {
+    //     if (snapshot.connectionState == ConnectionState.waiting) {
+    //       return Center(
+    //         child: CircularProgressIndicator(
+    //           color: AppColors.primaryLightColor,
+    //         ),
+    //       );
+    //     } else if (snapshot.hasError) {
+    //       return Column(
+    //         children: [
+    //           Text('Something went wrong'),
+    //           ElevatedButton(
+    //               onPressed: () {
+    //                 ApiManager.getNewsBySourceId(widget.source.id ?? "");
+    //               },
+    //               child: Text('Try again'))
+    //         ],
+    //       );
+    //     }
+    //     if (snapshot.data!.status != 'ok') {
+    //       return Column(
+    //         children: [
+    //           Text(snapshot.data!.message!),
+    //           ElevatedButton(
+    //               onPressed: () {
+    //                 ApiManager.getNewsBySourceId(widget.source.id ?? "");
+    //               },
+    //               child: Text('Try again'))
+    //         ],
+    //       );
+    //     }
+    //     var newsList = snapshot.data!.articles!;
+    //     return ListView.builder(
+    //       itemBuilder: (context, index) {
+    //         return NewsItem(
+    //           news: newsList[index],
+    //         );
+    //       },
+    //       itemCount: newsList.length,
+    //     );
+    //   });
   }
 }
